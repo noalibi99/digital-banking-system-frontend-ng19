@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {CustomerService} from '../services/customer.service';
+import {catchError, delay, Observable, of} from 'rxjs';
+import {Customer} from '../models/customer.model';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-customers',
@@ -9,19 +12,40 @@ import {CustomerService} from '../services/customer.service';
   styleUrl: './customer.component.css',
 })
 export class CustomerComponent implements OnInit {
-  customers: any;
 
-  constructor(private customerService : CustomerService) {
+  customers$: Observable<Customer[]> | undefined;
+
+  errorMsg: string | undefined;
+  searchformGroup: FormGroup | undefined;
+
+  constructor(private customerService: CustomerService, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
-    this.customerService.getCustomers().subscribe({
-      next: data => {
-        this.customers = data;
-      },
-      error: err => {
-        console.error('Error fetching customers:', err);
-       }
+    this.searchformGroup = this.fb.group({
+      keyword: this.fb.control('')
     });
+    this.customers$ = this.customerService
+      .getCustomers()
+      .pipe(delay(1000),
+
+        catchError(err => {
+          this.errorMsg = err.message;
+          return of([]);
+        })
+      );
+  }
+
+  handleSearchCustomers() {
+    let keyword = this.searchformGroup?.value.keyword;
+    this.customers$ = this.customerService
+      .handleSearchCustomers(keyword)
+      .pipe(
+        delay(100),
+        catchError(err => {
+          this.errorMsg = err.message;
+          return of([]);
+        })
+      );
   }
 }

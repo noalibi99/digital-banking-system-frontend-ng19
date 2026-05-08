@@ -7,10 +7,11 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { CustomerComponent } from './customers/customer.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { HttpClientModule } from '@angular/common/http';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [App, NavbarComponent, CustomerComponent, AccountsComponent],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, ReactiveFormsModule],
   providers: [provideBrowserGlobalErrorListeners()],
   bootstrap: [App],
 })
