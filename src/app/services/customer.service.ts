@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {delay, Observable} from 'rxjs';
 import {Customer} from '../models/customer.model';
 import {environment} from '../../environments/environment';
+import {BankAccountModel} from "../models/bank-account.model";
 
 
 @Injectable({
@@ -26,5 +27,9 @@ export class CustomerService {
 
   deleteCustomer(customer: Customer){
     return this.http.delete<void>(environment.apiUrl+`/customers/${customer.id}`);
+  }
+
+  getCustomerAccounts(customerId: number) : Observable<BankAccountModel[]> {
+    return this.http.get<BankAccountModel[]>(environment.apiUrl+`/customers/${customerId}/accounts`);
   }
 }

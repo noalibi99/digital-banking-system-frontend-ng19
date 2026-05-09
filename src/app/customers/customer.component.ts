@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {CustomerService} from '../services/customer.service';
 import {catchError, delay, map, Observable, of} from 'rxjs';
 import {Customer} from '../models/customer.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-customers',
@@ -16,38 +16,48 @@ export class CustomerComponent implements OnInit {
   customers$: Observable<Customer[]> | undefined;
 
   errorMsg: string | undefined;
-  searchformGroup: FormGroup | undefined;
+  searchFormGroup: FormGroup | undefined;
 
-  constructor(private customerService: CustomerService, private fb: FormBuilder) {
+  constructor(private customerService: CustomerService, private fb: FormBuilder, private router: Router) {
   }
 
   ngOnInit(): void {
-    this.searchformGroup = this.fb.group({
+    this.searchFormGroup = this.fb.group({
       keyword: this.fb.control('')
     });
-    this.customers$ = this.customerService
-      .getCustomers()
-      .pipe(delay(1000),
 
-        catchError(err => {
-          this.errorMsg = err.message;
-          return of([]);
-        })
-      );
+
+    this.loadCustomers();
   }
 
+  private loadCustomers(keyword?: string) {
+    // clear previous error
+    this.errorMsg = undefined;
+
+    const source$ = keyword
+      ? this.customerService.handleSearchCustomers(keyword)
+      : this.customerService.getCustomers();
+
+    this.customers$ = source$.pipe(
+      delay(500),
+      catchError(err => {
+        this.errorMsg = err?.error?.message || err?.message || 'Failed to load customers';
+        return of([] as Customer[]);
+      })
+    );
+  }
+
+
   handleSearchCustomers() {
-    let keyword = this.searchformGroup?.value.keyword;
+    let keyword = this.searchFormGroup?.value.keyword;
     this.customers$ = this.customerService
       .handleSearchCustomers(keyword)
       .pipe(
-        delay(100),
         catchError(err => {
           this.errorMsg = err.message;
           return of([]);
         })
       );
-
   }
 
   handleDeleteCustomer(c: Customer) {
@@ -63,5 +73,9 @@ export class CustomerComponent implements OnInit {
         })
       );
     });
+  }
+
+  handleCustomerAccounts(customer: Customer) {
+    this.router.navigateByUrl('/customer-accounts/' + customer.id, {state: customer});
   }
 }

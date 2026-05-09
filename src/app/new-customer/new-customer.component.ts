@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {Customer} from '../models/customer.model';
 import {CustomerService} from '../services/customer.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-new-customer-component',
@@ -14,7 +15,7 @@ export class NewCustomerComponent implements OnInit {
 
   newCustomerFormGroup: FormGroup | undefined;
 
-  constructor(private fb: FormBuilder, private customerService: CustomerService) {
+  constructor(private fb: FormBuilder, private customerService: CustomerService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -30,6 +31,7 @@ export class NewCustomerComponent implements OnInit {
       next: data => {
         alert("Customer saved successfully");
         this.newCustomerFormGroup?.reset();
+        this.router.navigateByUrl("/customers");
       },
       error: err => {
         alert(err.message);

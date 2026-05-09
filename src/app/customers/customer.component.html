@@ -1,57 +1,84 @@
 <div class="container mt-2">
 
-  @if (customers$ | async; as customers) {
-    <div class="card">
-      <div class="card-header">
-        Customers
-      </div>
-      <div class="card-body">
-        @if (searchformGroup) {
-          <form [formGroup]="searchformGroup" (ngSubmit)="handleSearchCustomers()" >
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Search by name or email" formControlName="keyword"/>
-              <button class="btn btn-outline-secondary bi-search" type="submit" ></button>
-            </div>
-          </form>
-        }
-        <table class="table">
-          <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col"></th>
-          </tr>
-          </thead>
-          <tbody>
-            @for (customer of customers; track customer.id) {
-              <tr>
-                <th scope="row">{{ customer.id }}</th>
-                <td>{{ customer.name }}</td>
-                <td>{{ customer.email }}</td>
-                <td>
-                  <button (click)="handleDeleteCustomer(customer)" class="btn btn-danger">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+  @if (errorMsg) {
 
-  } @else if (errorMsg) {
     <div class="alert alert-danger" role="alert">
       Could not load customers: <br> {{ errorMsg }}
     </div>
 
   } @else {
-    <div class="d-flex justify-content-center">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
+
+    @if (customers$ | async; as customers) {
+
+      <div class="card">
+        <div class="card-header">
+          Customers
+        </div>
+
+        <div class="card-body">
+
+          @if (searchFormGroup) {
+            <form [formGroup]="searchFormGroup"
+                  (ngSubmit)="handleSearchCustomers()">
+
+              <div class="input-group mb-3">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Search by name or email"
+                       formControlName="keyword"/>
+
+                <button class="btn btn-outline-secondary bi-search"
+                        type="submit"></button>
+              </div>
+
+            </form>
+          }
+
+          <table class="table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+              @for (customer of customers; track customer.id) {
+                <tr>
+                  <th>{{ customer.id }}</th>
+                  <td>{{ customer.name }}</td>
+                  <td>{{ customer.email }}</td>
+                  <td>
+                    <button (click)="handleDeleteCustomer(customer)"
+                            class="btn btn-danger">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                  <td>
+                    <button (click)="handleCustomerAccounts(customer)"
+                            class="btn btn-success">
+                      Accounts
+                    </button>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+        </div>
       </div>
-    </div>
+
+    } @else {
+
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+    }
+
   }
 
 </div>

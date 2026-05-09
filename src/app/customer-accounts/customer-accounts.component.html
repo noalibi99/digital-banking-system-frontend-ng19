@@ -1,0 +1,86 @@
+@if (accounts$ | async; as accounts) {
+  <div class="container mt-3">
+
+    @if (accounts.length > 0) {
+      <div class="mb-3">
+        <h5 class="mb-0">{{ accounts[0].customerDTO.name }}</h5>
+        <small class="text-muted">{{ accounts[0].customerDTO.email }}</small>
+      </div>
+    }
+
+    <div class="row g-3">
+      @for (account of accounts; track account.id) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi fs-5"
+                   [class.bi-piggy-bank]="account.type === 'SavingAccount'"
+                   [class.bi-credit-card]="account.type === 'CurrentAccount'"></i>
+                <div>
+                  <small class="text-muted d-block">Account</small>
+                  <span class="fw-medium">
+                    {{ account.type === 'SavingAccount' ? 'Saving account' : 'Current account' }}
+                  </span>
+                </div>
+              </div>
+              <span class="badge"
+                    [class.bg-success]="account.status === 'ACTIVATED'"
+                    [class.bg-warning]="account.status === 'SUSPENDED'"
+                    [class.bg-secondary]="account.status === 'CREATED'">
+                {{ account.status }}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <small class="text-muted">Balance</small>
+              <h4 class="mt-1">
+                {{ account.balance | number:'1.2-2' }}
+                <small class="text-muted fs-6">{{ account.currency }}</small>
+              </h4>
+
+              <hr>
+
+              <div class="d-flex justify-content-between text-muted small mb-2">
+                <span>Opened</span>
+                <span class="text-body">{{ account.createdAt | date:'mediumDate' }}</span>
+              </div>
+
+              @if (account.type === 'CurrentAccount' && account.overDraft != null) {
+                <div class="d-flex justify-content-between small">
+                  <span class="text-muted">Overdraft limit</span>
+                  <span class="text-warning fw-medium">
+                    {{ account.overDraft | number:'1.2-2' }} {{ account.currency }}
+                  </span>
+                </div>
+              }
+
+              @if (account.type === 'SavingAccount' && account.interestRate != null) {
+                <div class="d-flex justify-content-between small">
+                  <span class="text-muted">Interest rate</span>
+                  <span class="text-success fw-medium">
+                    {{ account.interestRate | number:'1.2-2' }}%
+                  </span>
+                </div>
+              }
+            </div>
+
+          </div>
+        </div>
+      } @empty {
+        <div class="col">
+          <p class="text-muted">No accounts found for this customer.</p>
+        </div>
+      }
+    </div>
+
+  </div>
+
+} @else {
+  <div class="d-flex justify-content-center mt-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+}

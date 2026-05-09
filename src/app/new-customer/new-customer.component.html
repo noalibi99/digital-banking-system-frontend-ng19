@@ -9,10 +9,20 @@
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
           <input type="text" id="name" class="form-control" formControlName="name"/>
+          <span *ngIf="newCustomerFormGroup.controls['name'].touched
+          && newCustomerFormGroup.controls['name'].errors && newCustomerFormGroup.controls['name'].errors!['required']" class="text-danger">
+            Name is required
+          </span>
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input type="email" id="email" class="form-control" formControlName="email"/>
+          <span *ngIf="newCustomerFormGroup.controls['email'].touched && newCustomerFormGroup.controls['email'].errors && newCustomerFormGroup.controls['email'].errors!['email']" class="text-danger">
+            Email is not valid
+          </span>
+          <span *ngIf="newCustomerFormGroup.controls['email'].touched && newCustomerFormGroup.controls['email'].errors && newCustomerFormGroup.controls['email'].errors!['required']" class="text-danger">
+            Email is required
+          </span>
         </div>
         <button type="submit" [disabled]="!newCustomerFormGroup.valid"  class="btn btn-primary">Create Customer</button>
       </form>

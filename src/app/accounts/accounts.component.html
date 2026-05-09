@@ -1,1 +1,148 @@
-<p>accounts works!</p>
+<div class="container mt-2">
+  <div class="row g-3">
+
+    <!-- First Card: Accounts -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Accounts</div>
+        <div class="card-body">
+
+          @if (accountFormGroup) {
+            <form [formGroup]="accountFormGroup" (ngSubmit)="handleSearchAccount()">
+              <div class="input-group mb-1">
+                <label class="input-group-text">Account Id :</label>
+                <input type="text" formControlName="accountId" class="form-control">
+                <button class="btn btn-dark"
+                        [disabled]="!accountFormGroup.valid"
+                        type="submit">
+                  <i class="bi bi-search"></i> Search
+                </button>
+              </div>
+              @if (accountFormGroup.controls['accountId'].touched
+              && accountFormGroup.controls['accountId'].errors?.['required']) {
+                <span class="text-danger" style="font-size: 0.8rem;">Account ID is Required</span>
+              }
+            </form>
+          }
+
+          @if (account$ | async; as accountDetails) {
+            <div class="mt-3">
+              <div class="d-flex gap-3 mb-2">
+                <div>
+                  <label class="text-muted me-1">Account ID:</label>
+                  <strong>{{ accountDetails.accountId }}</strong>
+                </div>
+                <div>
+                  <label class="text-muted me-1">Balance:</label>
+                  <strong>{{ accountDetails.balance | number: '1.2-2' }}</strong>
+                </div>
+              </div>
+
+              <table class="table table-hover table-striped table-sm">
+                <thead class="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th class="text-end">Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (op of accountDetails.accountOperationsDTOList; track op.id) {
+                    <tr>
+                      <td>{{ op.id }}</td>
+                      <td>{{ op.operationDate | date: 'dd-MM-yyyy HH:mm:ss' }}</td>
+                      <td>{{ op.type }}</td>
+                      <td class="text-end">{{ op.amount | number: '1.2-2' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+
+              <!-- Pagination -->
+              <ul class="nav nav-pills">
+                @for (page of pages(accountDetails.totalPages); track page) {
+                  <li>
+                    <a class="btn ms-1 mt-1"
+                       [ngClass]="page === currentPage ? 'btn-dark' : 'btn-outline-dark'"
+                       (click)="goToPage(page)">
+                      {{ page }}
+                    </a>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Card: Operations -->
+    @if (operationsFormGroup && account$) {
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Operations</div>
+        <div class="card-body">
+          {{operationsFormGroup.value | json}}
+
+            <form [formGroup]="operationsFormGroup" (ngSubmit)="handleAccountOperation()">
+
+              <!-- ✅ FIX: Radios in their own row, fields stacked below -->
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Operation Type</label>
+                <div class="d-flex gap-4">
+                  <div class="form-check">
+                    <input id="credit" type="radio" value="CREDIT"
+                           formControlName="OpType" class="form-check-input">
+                    <label for="credit" value="CREDIT" class="form-check-label">Credit</label>
+                  </div>
+                  <div class="form-check">
+                    <input id="debit" type="radio" value="DEBIT"
+                           formControlName="OpType" class="form-check-input">
+                    <label for="debit" class="form-check-label">Debit</label>
+                  </div>
+                  <div class="form-check">
+                    <input id="transfer" type="radio" value="TRANSFER"
+                           formControlName="OpType" class="form-check-input">
+                    <label for="transfer" class="form-check-label">Transfer</label>
+                  </div>
+                </div>
+              </div>
+              @if (operationsFormGroup.value.OpType === 'TRANSFER') {
+              <div class="mb-3">
+                <label for="accountDestination" class="form-label">Account Destination</label>
+                <input id="accountDestination" type="text"
+                       formControlName="accountDestination" class="form-control">
+              </div>
+              }
+              <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input id="amount" type="number"
+                       formControlName="amount" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input id="description" type="text"
+                       formControlName="description" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <button class="btn btn-dark"
+                        [disabled]="!operationsFormGroup.valid"
+                        type="submit">
+                  <i class="bi bi-check-lg"></i> Save Operation
+                </button>
+              </div>
+
+            </form>
+
+
+        </div>
+      </div>
+    </div>
+    }
+
+  </div>
+</div>
