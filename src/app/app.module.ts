@@ -10,6 +10,8 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { NewCustomerComponent } from './new-customer/new-customer.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { CustomerAccountsComponent } from './customer-accounts/customer-accounts.component';
+import { LoginComponent } from './login/login.component';
+import { AdminTemplateComponent } from './admin-template/admin-template.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { CustomerAccountsComponent } from './customer-accounts/customer-accounts
     AccountsComponent,
     NewCustomerComponent,
     NavbarComponent,
-    CustomerAccountsComponent
+    CustomerAccountsComponent,
+    LoginComponent,
+    AdminTemplateComponent
   ],
   imports: [
     BrowserModule,
