@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountsService } from '../services/accounts.service';
 import { Observable } from 'rxjs';
 import { AccountDetails } from '../models/account.model';
+import {AuthService} from '../services/auth.service';
 
 @Component({
   selector: 'app-accounts',
@@ -18,7 +19,7 @@ export class AccountsComponent implements OnInit {
   currentPage: number = 0;
   pageSize: number = 5;
 
-  constructor(private accountService: AccountsService, private fb: FormBuilder) {}
+  constructor(public authService : AuthService, private accountService: AccountsService, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.accountFormGroup = this.fb.group({

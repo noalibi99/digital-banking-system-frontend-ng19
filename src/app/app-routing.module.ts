@@ -6,13 +6,18 @@ import {NewCustomerComponent} from './new-customer/new-customer.component';
 import {CustomerAccountsComponent} from './customer-accounts/customer-accounts.component';
 import {LoginComponent} from './login/login.component';
 import {AdminTemplateComponent} from './admin-template/admin-template.component';
+import {authenticationGuard} from './guards/authentication.guard';
+import {authorizationGuard} from './guards/authorization.guard';
+import {NotAuthorizedComponent} from './not-authorized/not-authorized.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "/login", pathMatch: "full"},
-  {path: "admin", component: AdminTemplateComponent, children: [
+  {path: "not-authorized", component: NotAuthorizedComponent},
+  {path: "admin", component: AdminTemplateComponent, canActivate: [authenticationGuard],
+    children: [
       {path: 'customers', component: CustomerComponent},
       {path: 'accounts', component: AccountsComponent},
-      {path: 'new-customer', component: NewCustomerComponent},
+      {path: 'new-customer', component: NewCustomerComponent, canActivate: [authorizationGuard], data: {role: "ADMIN"}},
       {path: 'customer-accounts/:id', component: CustomerAccountsComponent},
     ]},
   {path: 'login', component: LoginComponent}

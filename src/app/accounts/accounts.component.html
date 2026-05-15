@@ -79,11 +79,11 @@
     </div>
 
     <!-- Second Card: Operations -->
-    @if (operationsFormGroup && account$) {
+    @if ( operationsFormGroup && account$) {
     <div class="col-md-6">
       <div class="card h-100">
         <div class="card-header">Operations</div>
-        <div class="card-body">
+        <div class="card-body" *ngIf="authService.roles.includes('ADMIN')">
           {{operationsFormGroup.value | json}}
 
             <form [formGroup]="operationsFormGroup" (ngSubmit)="handleAccountOperation()">

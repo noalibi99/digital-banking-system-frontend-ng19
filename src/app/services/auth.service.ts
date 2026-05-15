@@ -32,4 +32,11 @@ export class AuthService {
     this.username = decodedJwt.sub;
     this.roles = decodedJwt.scope;
   }
+
+  logout() {
+    this.isAuthenticated = false;
+    this.accessToken = undefined;
+    this.username = undefined;
+    this.roles = [];
+  }
 }
